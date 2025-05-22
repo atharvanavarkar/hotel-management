@@ -11,10 +11,12 @@
 import mongoose from "mongoose";
 
 // Schema to store booking details for each room booking
+
 const BookingSchema = new mongoose.Schema({
     roomNumber: { type: Number, required: true },
     fromDate: { type: Date, required: true },
     toDate: { type: Date, required: true },
+    bookedBy: { type: String, required: true }, // <-- NEW FIELD (email of user)
 });
 
 // Schema to store detailed transaction information
@@ -26,7 +28,10 @@ const TransactionSchema = new mongoose.Schema({
     transactionId: { type: String, required: true },
     date: { type: Date, default: Date.now },
 });
-
+const roomSchema = new mongoose.Schema({
+    isBooked: { type: Boolean, default: false },
+    bookedBy: { type: String, default: null }, // email of the user who booked
+});
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, unique: true, required: true },
