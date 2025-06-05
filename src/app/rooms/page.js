@@ -13,7 +13,7 @@ export default function Rooms() {
         Array.from({ length: 24 }, (_, i) => ({
             number: i + 1,
             type: i < 6 ? "Luxury" : "Normal",
-            price: i < 6 ? 5000 : 2000,
+            price: i < 6 ? 1 : 2000,
             ac: i < 6,
             booked: false,
             bookingDetails: null,

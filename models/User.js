@@ -27,11 +27,14 @@ const TransactionSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     transactionId: { type: String, required: true },
     date: { type: Date, default: Date.now },
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
+    razorpaySignature: { type: String },
 });
-const roomSchema = new mongoose.Schema({
-    isBooked: { type: Boolean, default: false },
-    bookedBy: { type: String, default: null }, // email of the user who booked
-});
+// const roomSchema = new mongoose.Schema({
+//     isBooked: { type: Boolean, default: false },
+//     bookedBy: { type: String, default: null }, // email of the user who booked
+// });
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, unique: true, required: true },

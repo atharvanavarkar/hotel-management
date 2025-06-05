@@ -79,7 +79,7 @@ export default function Navbar() {
                     {/* Auth Button */}
                     <button
                         onClick={handleAuthClick}
-                        className="ml-4 px-5 py-2 bg-red-500 rounded hover:bg-blue-600"
+                        className="ml-4 px-5 py-2 bg-red-500 rounded hover:bg-red-600"
                     >
                         {session ? "Logout" : "Login / Signup"}
                     </button>
