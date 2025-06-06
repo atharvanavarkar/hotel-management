@@ -202,7 +202,8 @@ export default function TransactionPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    // ✅ Load Razorpay script once on component mount
+    const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
     useEffect(() => {
         const script = document.createElement("script");
         script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -235,7 +236,6 @@ export default function TransactionPage() {
         const amount = dailyRate * diffDays;
 
         try {
-            // Step 1: Create order on server
             const res = await fetch("/api/create-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -251,7 +251,7 @@ export default function TransactionPage() {
             }
 
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Must be in .env file
+                key: razorpayKey, // ✅ FIXED
                 amount: data.amount,
                 currency: "INR",
                 name: "Hotel Booking",
@@ -281,8 +281,8 @@ export default function TransactionPage() {
                     }
                 },
                 prefill: {
-                    name: session.user.name,
-                    email: session.user.email,
+                    name: session?.user?.name || "",
+                    email: session?.user?.email || "",
                 },
                 theme: {
                     color: "#38bdf8",
@@ -292,8 +292,8 @@ export default function TransactionPage() {
             const razorpay = new window.Razorpay(options);
             razorpay.open();
         } catch (err) {
-            console.error("Error in payment:", err);
-            alert("Payment error occurred. Please try again.");
+            console.error("Payment error:", err);
+            alert("Something went wrong. Please try again.");
         }
 
         setLoading(false);
