@@ -1,29 +1,5 @@
-// "use client";
-
-// import { useSession } from "next-auth/react";
-
-// export default function Dashboard() {
-//     const { data: session, status } = useSession();
-
-//     if (status === "loading") return <p>Loading...</p>;
-//     if (!session) return <p>Please log in to access the dashboard.</p>;
-
-//     return (
-//         <div className="p-6">
-//             <h1 className="text-4xl font-bold">Dashboard</h1>
-//             <p>Welcome, {session.user.name}</p>
-
-//             <h2 className="text-2xl mt-4">Booked Rooms</h2>
-//             <p>Your booked rooms will appear here...</p>
-
-//             <h2 className="text-2xl mt-4">Transactions</h2>
-//             <p>Your past transactions will be displayed here...</p>
-//         </div>
-//     );
-// }
-// app/dashboard/page.js
-
 "use client";
+
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
