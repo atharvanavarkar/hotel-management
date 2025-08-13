@@ -87,7 +87,7 @@ function TransactionPage() {
                     const verifyData = await verifyRes.json();
                     if (verifyData.success) {
                         alert("Payment successful!");
-                        router.push("/payment");
+                        router.push("/dashboard");
                     } else {
                         alert("Payment verification failed.");
                     }
