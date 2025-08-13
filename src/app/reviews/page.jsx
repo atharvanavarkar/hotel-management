@@ -31,24 +31,28 @@ export default function ReviewsPage() {
         comment: "",
     });
     const [showWriteReview, setShowWriteReview] = useState(false);
+    const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+    // Handle responsive behavior
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsLargeScreen(window.innerWidth >= 1024);
+        };
+
+        // Set initial value
+        checkScreenSize();
+
+        // Add event listener
+        window.addEventListener('resize', checkScreenSize);
+
+        // Cleanup
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
 
     // Load reviews once
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem("reviews");
-            if (stored) setReviews(JSON.parse(stored));
-            else setReviews(seedReviews);
-        } catch {
-            setReviews(seedReviews);
-        }
+        setReviews(seedReviews);
     }, []);
-
-    // Persist reviews
-    useEffect(() => {
-        try {
-            localStorage.setItem("reviews", JSON.stringify(reviews));
-        } catch { }
-    }, [reviews]);
 
     const stats = useMemo(() => {
         const total = reviews.length;
@@ -80,8 +84,7 @@ export default function ReviewsPage() {
         </div>
     );
 
-    const handleSubmitReview = (e) => {
-        e.preventDefault();
+    const handleSubmitReview = () => {
         const { name, email, title, comment, rating } = newReview;
         if (!name || !email || !title || !comment) {
             alert("Please fill all fields.");
@@ -123,12 +126,7 @@ export default function ReviewsPage() {
 
             {/* main content: two-column grid with fixed left width on lg */}
             <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
-                <div
-                    className="grid grid-cols-1 gap-8"
-                    // use arbitrary property for a fixed left column on large screens:
-                    // we fall back to a single column for small screens
-                    style={{ gridTemplateColumns: window.innerWidth >= 1024 ? "360px 1fr" : "1fr" }}
-                >
+                <div className={`grid grid-cols-1 gap-8 ${isLargeScreen ? 'lg:grid-cols-[360px_1fr]' : ''}`}>
                     {/* LEFT: summary (sticky on large screens) */}
                     <aside className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl p-6 lg:sticky lg:top-24">
                         <div className="text-left">
@@ -202,13 +200,12 @@ export default function ReviewsPage() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
                     <div className="bg-white rounded-lg w-full max-w-md p-6">
                         <h2 className="text-xl font-semibold mb-4">Write a Review</h2>
-                        <form onSubmit={handleSubmitReview} className="space-y-3">
+                        <div className="space-y-3">
                             <input
                                 className="w-full border px-3 py-2 rounded"
                                 placeholder="Name"
                                 value={newReview.name}
                                 onChange={(e) => setNewReview((s) => ({ ...s, name: e.target.value }))}
-                                required
                             />
                             <input
                                 className="w-full border px-3 py-2 rounded"
@@ -216,14 +213,12 @@ export default function ReviewsPage() {
                                 type="email"
                                 value={newReview.email}
                                 onChange={(e) => setNewReview((s) => ({ ...s, email: e.target.value }))}
-                                required
                             />
                             <input
                                 className="w-full border px-3 py-2 rounded"
                                 placeholder="Title"
                                 value={newReview.title}
                                 onChange={(e) => setNewReview((s) => ({ ...s, title: e.target.value }))}
-                                required
                             />
                             <textarea
                                 className="w-full border px-3 py-2 rounded"
@@ -231,7 +226,6 @@ export default function ReviewsPage() {
                                 rows={4}
                                 value={newReview.comment}
                                 onChange={(e) => setNewReview((s) => ({ ...s, comment: e.target.value }))}
-                                required
                             />
                             <div className="flex items-center gap-3">
                                 <label className="text-sm">Rating</label>
@@ -252,11 +246,11 @@ export default function ReviewsPage() {
                                 <button type="button" onClick={() => setShowWriteReview(false)} className="px-4 py-2 rounded border">
                                     Cancel
                                 </button>
-                                <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white">
+                                <button onClick={handleSubmitReview} className="px-4 py-2 rounded bg-blue-600 text-white">
                                     Submit
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             )}
