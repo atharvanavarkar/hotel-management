@@ -236,10 +236,18 @@ export default function Navbar() {
                         }`}>
                         <div className="px-4 py-6 space-y-4">
                             {/* Mobile Navigation Links */}
-                            {['Home', 'Rooms', 'Profile', 'Payments'].map((item) => (
+                            {['Home', 'Rooms', 'Profile', 'Review', 'Gallery'].map((item) => (
                                 <Link
                                     key={item}
-                                    href={item === 'Profile' ? '/dashboard' : `/${item.toLowerCase()}`}
+                                    href={
+                                        item === 'Home'
+                                            ? '/'
+                                            : item === 'Profile'
+                                                ? '/dashboard'
+                                                :
+                                                item === 'Review'
+                                                    ? '/reviews' : `/${item.toLowerCase()}`
+                                    }
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${isScrolled
                                         ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
