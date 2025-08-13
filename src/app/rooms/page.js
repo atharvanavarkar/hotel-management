@@ -213,7 +213,7 @@ export default function Rooms() {
                                             </div>
                                         </div>
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                                            <span className="text-black bg-white bg-opacity-20 px-3 py-1 rounded-full">
                                                 {room.type}
                                             </span>
                                             <span className={`px-3 py-1 rounded-full text-sm font-medium ${room.booked
