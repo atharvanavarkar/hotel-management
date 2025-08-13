@@ -35,6 +35,63 @@ export default function AdminPage() {
         }
     };
 
+    const deleteBooking = async (booking) => {
+        if (!confirm("Are you sure you want to delete this booking?")) return;
+
+        const res = await fetch("/api/admin/delete-booking", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: selectedUser.email,
+                roomNumber: booking.roomNumber,
+                fromDate: booking.fromDate,
+                toDate: booking.toDate,
+            }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert("Booking deleted");
+            // Refresh bookings for the same user
+            fetchUsers().then(() => {
+                const updatedUser = users.find(u => u.email === selectedUser.email);
+                setSelectedUser(updatedUser);
+            });
+            window.location.reload();
+        } else {
+            alert(data.error || "Failed to delete booking");
+        }
+    };
+
+    const editBooking = async (booking) => {
+        const newFrom = prompt(
+            "Enter new start date (YYYY-MM-DD):",
+            booking.fromDate.split("T")[0]
+        );
+        const newTo = prompt(
+            "Enter new end date (YYYY-MM-DD):",
+            booking.toDate.split("T")[0]
+        );
+        if (!newFrom || !newTo) return;
+
+        await fetch("/api/admin/edit-booking", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: selectedUser.email,
+                roomNumber: booking.roomNumber,
+                fromDate: booking.fromDate,
+                toDate: booking.toDate,
+                newFromDate: newFrom,
+                newToDate: newTo,
+            }),
+        });
+
+        // Reload the page to get updated data from backend
+        window.location.reload();
+    };
+
+
     return (
         <div className="py-16 flex justify-center items-center w-full">
             <div className="p-4 md:p-8 bg-gray-50 min-h-screen w-full max-w-7xl text-center">
@@ -53,10 +110,7 @@ export default function AdminPage() {
                         </thead>
                         <tbody>
                             {users.map((user) => (
-                                <tr
-                                    key={user.email}
-                                    className="border-t hover:bg-gray-50 transition"
-                                >
+                                <tr key={user.email} className="border-t hover:bg-gray-50 transition">
                                     <td className="py-3 px-4">{user.name}</td>
                                     <td className="py-3 px-4">{user.email}</td>
                                     <td className="py-3 px-4 text-center">
@@ -90,40 +144,6 @@ export default function AdminPage() {
                     </table>
                 </div>
 
-                {/* Mobile Cards */}
-                <div className="grid grid-cols-1 md:hidden gap-4 p-4">
-                    {users.map((user) => (
-                        <div
-                            key={user.email}
-                            className="border rounded-lg p-4 shadow-sm bg-white"
-                        >
-                            <div className="flex justify-between items-center mb-2">
-                                <h2 className="text-lg font-semibold">{user.name}</h2>
-                                {user.isAdmin && (
-                                    <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-sm flex items-center gap-1">
-                                        <Shield size={14} /> Admin
-                                    </span>
-                                )}
-                            </div>
-                            <p className="text-gray-600 mb-3 break-words">{user.email}</p>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => deleteUser(user.email)}
-                                    className="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded flex items-center justify-center gap-1 text-sm"
-                                >
-                                    <Trash2 size={16} /> Delete
-                                </button>
-                                <button
-                                    onClick={() => setSelectedUser(user)}
-                                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded flex items-center justify-center gap-1 text-sm"
-                                >
-                                    <Eye size={16} /> View
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
                 {/* Booking Modal */}
                 {selectedUser && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -149,10 +169,16 @@ export default function AdminPage() {
                                             <p><strong>To:</strong> {new Date(booking.toDate).toLocaleDateString()}</p>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded flex items-center gap-1 text-sm">
+                                            <button
+                                                onClick={() => editBooking(booking)}
+                                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded flex items-center gap-1 text-sm"
+                                            >
                                                 <Edit3 size={14} /> Edit
                                             </button>
-                                            <button className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded flex items-center gap-1 text-sm">
+                                            <button
+                                                onClick={() => deleteBooking(booking)}
+                                                className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded flex items-center gap-1 text-sm"
+                                            >
                                                 <Trash2 size={14} /> Delete
                                             </button>
                                         </div>

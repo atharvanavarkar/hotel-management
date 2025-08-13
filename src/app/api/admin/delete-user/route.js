@@ -1,11 +1,8 @@
-// api/admin/delete-user/route.js
-
-// admin/delete-user/route.js
-
 import { NextResponse } from "next/server";
 import connectDB from "../../../../../lib/mongodb";
 import User from "../../../../../models/User";
-import { getServerSession } from "next-auth/next";
+import Room from "../../../../../models/Room"; // ✅ IMPORT THIS
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req) {
@@ -15,6 +12,9 @@ export async function POST(req) {
     }
 
     const { email } = await req.json();
+    if (!email) {
+        return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
 
     try {
         await connectDB();
@@ -46,9 +46,6 @@ export async function POST(req) {
         });
     } catch (error) {
         console.error("Error deleting user:", error);
-        return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
